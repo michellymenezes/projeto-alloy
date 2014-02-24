@@ -4,9 +4,13 @@ sig bairro{
 	casas: set casa
 }
 
-sig auto_branco extends bairro{}
+sig autoBranco extends bairro{}
 
 sig centro extends bairro{}
+
+fact nomeBairro {
+	bairro = autoBranco + centro
+}
 
 sig casa{}
 
