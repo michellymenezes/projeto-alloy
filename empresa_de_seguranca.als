@@ -4,16 +4,21 @@ sig bairro{
 	casas: set casa
 }
 
-sig autoBranco extends bairro{}
+one sig autoBranco extends bairro{}
 
-sig centro extends bairro{}
+one sig centro extends bairro{}
 
 // Fato sobre bairro
 fact nomeBairro {
-	bairro = autoBranco + centro
+	all b: bairro | some b.casas
+	bairro = autoBranco && centro
 }
 
 sig casa{}
+
+fact sobreCasa{
+	all c:casa | some c.servico
+}
 
 abstract sig servico{}
 
@@ -26,3 +31,6 @@ sig rondaNoturna extends servico{
 sig monitoramentoCameras extends servico{
 	r: one cercaEletrica
 }
+
+pred show[]{}
+run show for 3
