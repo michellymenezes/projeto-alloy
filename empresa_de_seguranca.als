@@ -6,3 +6,5 @@ sig bairro{
 
 sig casa{}
 
+abstract sig servico{}
+
