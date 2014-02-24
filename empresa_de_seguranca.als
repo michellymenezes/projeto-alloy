@@ -12,3 +12,8 @@ sig casa{}
 
 abstract sig servico{}
 
+sig cercaEletrica extends servico{}
+
+sig rondaNoturna extends servico{}
+
+sig monitoramentoCameras extends servico{}
