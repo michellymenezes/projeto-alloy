@@ -24,16 +24,16 @@ fact nomeBairro {
 }
 
 sig casa{
-	servicos: lone cercaEletrica
+	servicos: lone servico
 }
 
 // FATO CASA
 fact sobreCasa{
 	all c: casa| #c.servicos >= 0
 
-	// não existe serviço composto sem cerca elétrica
+	// não existe casa sem bairro
 	all c: casa | c in bairro.casas
-	}
+}
 
 abstract sig servico{}
 
@@ -66,17 +66,17 @@ fact sobreComp{
 //PREDICADO
 
 // cada cerca so pertence a uma casa
-pred cercaPorCasa[c: cercaEletrica, c1: casa, c2: casa]{
-	c in c1.servicos => c !in c2.servicos
+pred cercaPorCasa[s: servico, c1: casa, c2: casa]{
+	s in c1.servicos => s !in c2.servicos
 }
 
 // cada ronda so pertence a uma cerca
-pred rondaPorCerca[r:rondaNoturna,c1:cercaEletrica,c2:cercaEletrica]{
+pred rondaPorCerca[r: rondaNoturna, c1: cercaEletrica, c2: cercaEletrica]{
 	r in c1.servComps => r !in c2.servComps
 }
 
 // cada camera so pertence a uma cerca
-pred cameraPorCerca[c:monitoramentoCameras,c1:cercaEletrica,c2:cercaEletrica]{
+pred cameraPorCerca[c: monitoramentoCameras, c1: cercaEletrica, c2: cercaEletrica]{
 	c in c1.servComps => c !in c2.servComps
 }
 
