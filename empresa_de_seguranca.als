@@ -1,7 +1,7 @@
 module empresaDeSeguranca
 
 sig bairro{
-	
+	casas: some casa
 }
 
 sig autoBranco extends bairro{}
@@ -10,11 +10,13 @@ sig centro extends bairro{}
 
 // Fato sobre bairro
 fact nomeBairro {
-	all b: bairro | some b.casas
+	all c: casa | one c.bairro
 	bairro = autoBranco + centro
 }
 
-sig casa{}
+sig casa{
+	bairro: one bairro
+}
 
 abstract sig servico{}
 
