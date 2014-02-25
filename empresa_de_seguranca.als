@@ -46,8 +46,19 @@ sig monitoramentoCameras extends servicoComp{}
 
 // fatos sobre servico composto
 fact sobreComp{
+	// não existe serviço composto sem cerca elétrica
 	all sc: servicoComp | sc in cercaEletrica.servComps
+
+	// todo serviço composto é ronda ou monitoramento
 	servicoComp = rondaNoturna + monitoramentoCameras
+}
+
+
+//PREDICADO
+
+// cada cerca so pertence a uma casa
+pred cercaPorCasa[c:cercaEletrica,c1:casa,c2:casa]{
+	c in c1.servicos => c !in c2.servicos
 }
 
 pred show[]{}
