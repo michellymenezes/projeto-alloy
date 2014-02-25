@@ -18,6 +18,7 @@ fact nomeBairro {
 sig casa{}
 
 fact sobreCasa{
+	all c:casa | one c.bairro
 	all c:casa | some c.servico
 	all c:casa | one c.servico
 }
