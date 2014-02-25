@@ -1,7 +1,10 @@
 module empresaDeSeguranca
 
+sig sistema{
+	bairros: autoBranco + centro
+}
+
 sig bairro{
-	casas: some casa
 }
 
 sig autoBranco extends bairro{}
