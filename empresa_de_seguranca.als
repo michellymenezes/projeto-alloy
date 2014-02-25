@@ -11,25 +11,27 @@ one sig centro extends bairro{}
 // Fato sobre bairro
 fact nomeBairro {
 	all b: bairro | some b.casas
-	bairro = autoBranco && centro
+	centro in bairro
+	autoBranco in bairro
 }
 
 sig casa{}
 
 fact sobreCasa{
 	all c:casa | some c.servico
+	all c:casa | one c.servico
 }
 
 abstract sig servico{}
 
 sig cercaEletrica extends servico{}
 
-sig rondaNoturna extends servico{
-	r: one cercaEletrica
-}
+sig rondaNoturna extends servico{}
 
-sig monitoramentoCameras extends servico{
-	r: one cercaEletrica
+sig monitoramentoCameras extends servico{}
+
+fact sobreServico{
+	all r: rondaNoturna | some r.cercaEletrica
 }
 
 pred show[]{}
