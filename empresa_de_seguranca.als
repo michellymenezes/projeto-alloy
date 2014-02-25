@@ -1,7 +1,7 @@
 module empresaDeSeguranca
 
 sig bairro{
-	casas: set casa
+	
 }
 
 sig autoBranco extends bairro{}
