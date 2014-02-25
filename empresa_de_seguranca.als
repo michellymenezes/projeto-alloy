@@ -15,8 +15,10 @@ sig centro extends bairro{}
 // FATO DE BAIRRO
 fact nomeBairro {
 	one sistema
+	// cada bairro possui, no mínimo, uma casa
 	all a: autoBranco| #a.casas >= 1
 	all c: centro| #c.casas >= 1
+	// existem dois bairros
 	all s: sistema | #s.bairros = 2
 	one autoBranco
 	one centro
@@ -29,7 +31,8 @@ sig casa{
 
 // FATO CASA
 fact sobreCasa{
-	all c: casa| #c.servicos >= 0
+	// casas possuem ou não algum serviço de segurança
+	all c: casa| #c.servicos = 1
 
 	// não existe casa sem bairro
 	all c: casa | c in bairro.casas
@@ -49,8 +52,12 @@ sig monitoramentoCameras extends servicoComp{}
 
 //FATO SERVIÇO BASICO
 fact sobreBasico{
-		// não existe cerca sem casa
-		all s: servico | s in casa.servicos
+
+	// cercas possuem ou não algum serviço composto
+	all c: cercaEletrica| #c.servComps >= 0
+
+	// não existe cerca sem casa
+	all s: servico | s in casa.servicos
 }
 
 // FATO SERVIÇO COMPOSTO
@@ -66,8 +73,8 @@ fact sobreComp{
 //PREDICADO
 
 // cada cerca so pertence a uma casa
-pred cercaPorCasa[s: servico, c1: casa, c2: casa]{
-	s in c1.servicos => s !in c2.servicos
+pred cercaPorCasa[c: cercaEletrica, c1: casa, c2: casa]{
+	c in c1.servicos => c !in c2.servicos
 }
 
 // cada ronda so pertence a uma cerca
