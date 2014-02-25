@@ -44,6 +44,12 @@ sig rondaNoturna extends servicoComp{}
 
 sig monitoramentoCameras extends servicoComp{}
 
+// fatos sobre serviço básico
+fact sobreBasico{
+		// não existe cerca sem casa
+		all s: servico | s in casa.servicos
+}
+
 // fatos sobre servico composto
 fact sobreComp{
 	// não existe serviço composto sem cerca elétrica
@@ -58,7 +64,17 @@ fact sobreComp{
 
 // cada cerca so pertence a uma casa
 pred cercaPorCasa[c:cercaEletrica,c1:casa,c2:casa]{
-	c in c1.servicos => c !in c2.servicos
+	c in c1.servComps => c !in c2.servComps
+}
+
+// cada ronda so pertence a uma cerca
+pred rondaPorCerca[r:rondaNoturna,c1:cercaEletrica,c2:cercaEletrica]{
+	r in c1.servComps => r !in c2.serviComps
+}
+
+// cada camera so pertence a uma cerca
+pred cameraPorCerca[c:monitoramentoCameras,c1:cercaEletrica,c2:cercaEletrica]{
+	c in c1.servComps => c !in c2.servComps
 }
 
 pred show[]{}
