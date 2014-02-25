@@ -1,10 +1,11 @@
 module empresaDeSeguranca
 
 sig sistema{
-	bairros: autoBranco + centro
+	bairros: set bairro
 }
 
 sig bairro{
+	casas: set casa
 }
 
 sig autoBranco extends bairro{}
@@ -13,25 +14,24 @@ sig centro extends bairro{}
 
 // Fato sobre bairro
 fact nomeBairro {
-	all c: casa | one c.bairro
+	one sistema
+	all s: sistema | #s.bairros = 2
+	one autoBranco
+	one centro
 	bairro = autoBranco + centro
 }
 
 sig casa{
-	bairro: one bairro
+	servicos: lone cercaEletrica
 }
 
 abstract sig servico{}
 
 sig cercaEletrica extends servico{}
 
-sig rondaNoturna extends servico{
-	r: one cercaEletrica
-}
+sig rondaNoturna extends servico{}
 
-sig monitoramentoCameras extends servico{
-	r: one cercaEletrica
-}
+sig monitoramentoCameras extends servico{}
 
 pred show[]{}
 run show for 3
