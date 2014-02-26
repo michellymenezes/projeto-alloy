@@ -47,6 +47,9 @@ fact sobreCasa{
 
 	// não existe casa sem bairro
 	all c: casa | c in bairro.casas
+
+	// uma casa não está em dois bairros
+	all b1: bairro, b2: bairro, c: casa | casaEmBairro[b1, b2, c]
 }
 
 
@@ -95,6 +98,11 @@ fact sobreServico{
 
 // ..:: PREDICADOS ::..
 
+// cada casa só pertence a um bairro
+pred casaEmBairro[b1: bairro, b2: bairro, c: casa]{
+	b1 != b2 => (c in b1.casas => c !in b2.casas)
+}
+
 // cada cerca so pertence a uma casa
 pred cercaPorCasa[c: cercaEletrica, c1: casa, c2: casa]{
 	c1 != c2 => (c in c1.servicos => c !in c2.servicos)
@@ -108,4 +116,4 @@ pred disparoporCerca[d: cercaDisparada, c1: cercaEletrica, c2: cercaEletrica]{
 
 
 pred show[]{}
-run show for 10
+run show for 15
