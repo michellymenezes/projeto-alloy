@@ -40,33 +40,32 @@ fact sobreCasa{
 
 abstract sig servico{}
 
-abstract sig servicoComp{}
-
 sig cercaEletrica extends servico{
-	servComps: lone servicoComp
+	camera: lone monitoramentoCameras,
+	ronda: lone rondaNoturna
 }
 
-sig rondaNoturna extends servicoComp{}
+sig rondaNoturna{}
 
-sig monitoramentoCameras extends servicoComp{}
+sig monitoramentoCameras{}
 
 //FATO SERVIÇO BASICO
 fact sobreBasico{
-
-	// cercas possuem ou não algum serviço composto
-	all c: cercaEletrica| #c.servComps >= 0
-
+	
+	all c: cercaEletrica, c1: casa, c2: casa | cercaPorCasa[c, c1, c2]
 	// não existe cerca sem casa
 	all s: servico | s in casa.servicos
 }
 
 // FATO SERVIÇO COMPOSTO
 fact sobreComp{
-	// não existe serviço composto sem cerca elétrica
-	all sc: servicoComp | sc in cercaEletrica.servComps
 
-	// todo serviço composto é ronda ou monitoramento
-	servicoComp = rondaNoturna + monitoramentoCameras
+	one monitoramentoCameras
+
+	// não existe serviço composto sem cerca elétrica
+	all r: rondaNoturna | r in cercaEletrica.ronda
+	all c: monitoramentoCameras | c in cercaEletrica.camera
+
 }
 
 
@@ -74,18 +73,10 @@ fact sobreComp{
 
 // cada cerca so pertence a uma casa
 pred cercaPorCasa[c: cercaEletrica, c1: casa, c2: casa]{
-	c in c1.servicos => c !in c2.servicos
+	c1 != c2 => (c in c1.servicos => c !in c2.servicos)
 }
 
-// cada ronda so pertence a uma cerca
-pred rondaPorCerca[r: rondaNoturna, c1: cercaEletrica, c2: cercaEletrica]{
-	r in c1.servComps => r !in c2.servComps
-}
 
-// cada camera so pertence a uma cerca
-pred cameraPorCerca[c: monitoramentoCameras, c1: cercaEletrica, c2: cercaEletrica]{
-	c in c1.servComps => c !in c2.servComps
-}
 
 pred show[]{}
 run show for 10
