@@ -26,7 +26,7 @@ fact nomeBairro {
 }
 
 sig casa{
-	servicos: lone servico
+	servicos: lone cercaEletrica
 }
 
 // FATO CASA
@@ -38,9 +38,8 @@ fact sobreCasa{
 	all c: casa | c in bairro.casas
 }
 
-abstract sig servico{}
 
-sig cercaEletrica extends servico{
+sig cercaEletrica{
 	camera: lone monitoramentoCameras,
 	ronda: lone rondaNoturna
 }
@@ -49,12 +48,12 @@ sig rondaNoturna{}
 
 sig monitoramentoCameras{}
 
-//FATO SERVIÇO BASICO
+// FATO SERVIÇO BASICO
 fact sobreBasico{
 	
 	all c: cercaEletrica, c1: casa, c2: casa | cercaPorCasa[c, c1, c2]
 	// não existe cerca sem casa
-	all s: servico | s in casa.servicos
+	all s: cercaEletrica | s in casa.servicos
 }
 
 // FATO SERVIÇO COMPOSTO
@@ -69,7 +68,7 @@ fact sobreComp{
 }
 
 
-//PREDICADO
+// PREDICADO
 
 // cada cerca so pertence a uma casa
 pred cercaPorCasa[c: cercaEletrica, c1: casa, c2: casa]{
