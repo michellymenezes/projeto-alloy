@@ -72,7 +72,7 @@ fact sobreBairro {
 fact sobreCasa{
 	// casas possuem ou não algum serviço de segurança
 	all c: Casa| #c.servicos >= 0
-	all c: Casa| #c.servicos <= 2
+	all c: Casa| #c.servicos <= 3
 
 	// não existe casa sem bairro
 	all c: Casa | c in bairro.casas
@@ -86,6 +86,7 @@ fact sobreCasa{
 
 fact {
 
+	#Equipe =3
 	// unica cerca por casa 
 	all c: Cerca | some k: Casa | c in k.servicos
 	all c: Camera | some k: Casa | c in k.servicos
@@ -93,6 +94,8 @@ fact {
 	all r: Ronda | some k: Casa | r in k.servicos
 	all c: Cerca, k1: Casa, k2: Casa | cadaCercaExclusivaPraUmaCasa[c, k1, k2]
 	all c1: Cerca, c2: Cerca, k: Casa | cadaCasaPossuiUmaCerca[c1, c2, k]
+	all c1: Camera, k: Casa| some  c2: Cerca | soTemCameraSeTiverCerca[c1, c2, k]
+	all r1: Ronda, k: Casa |  some c2: Cerca | soTemRondaSeTiverCerca[r1, c2, k]
 	//all r1: Ronda, r2: Ronda, k: Casa | cadaCasaPossuiUmaRonda[r1, r2, k]
 	//all r: Ronda, k1: Casa, k2: Casa | cadaRondaExclusivaPraUmaCasa[r, k1, k2]
 	all c1: Camera, c2: Camera, k: Casa | cadaCasaPossuiUmaCamera[c1, c2, k]
@@ -122,6 +125,13 @@ pred cadaCasaPossuiUmaCerca[c1: Cerca, c2: Cerca, k: Casa]{
 	c1 != c2 => (c1 in k.servicos => c2 !in k.servicos)
 }
 
+pred soTemCameraSeTiverCerca[c1: Camera, c2: Cerca, k: Casa]{
+	c1 in k.servicos =>  c2 in k.servicos
+}
+pred soTemRondaSeTiverCerca[r1: Ronda, c2: Cerca, k: Casa]{
+	r1 in k.servicos =>  c2 in k.servicos
+}
+
 pred cadaCasaPossuiUmaRonda[r1: Ronda, r2: Ronda, k: Casa]{
 	r1 != r2 => (r1 in k.servicos => r2 !in k.servicos)
 }
@@ -146,4 +156,4 @@ fun cercaQueEquipeEstaVerificando[e: Equipe, t: Time]: lone Cerca{
 
 
 pred show[]{}
-run show for 15// but 30 Cerca, 5 Casa
+run show for 15 but exactly 2 Cerca, 5 Casa
