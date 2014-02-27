@@ -38,7 +38,7 @@ one sig Ocupada, Desocupada extends StatusDaEquipe{}
 
 sig Equipe {
 	 situacao: StatusDaEquipe -> Time,
-    ocupando: Cerca lone -> Time
+     verificando: Cerca lone -> Time
 }
 
 
@@ -104,6 +104,7 @@ fact {
    all r: Ronda | some k: Casa | r in k.servicos implies (some q: Cerca | q in k.servicos)
 	all c: Camera | some k: Casa | c in k.servicos implies (some q: Cerca | q in k.servicos)
 	cadaEquipeEstaVerificandoNoMaximoCerca
+    equipeOcupadaQuandoVerificando
 }
 
 // ..:: PREDICADOS ::..
@@ -149,11 +150,20 @@ pred cadaEquipeEstaVerificandoNoMaximoCerca[]{
 	lone cercaQueEquipeEstaVerificando[e, t]
 }
 
+pred equipeOcupadaQuandoVerificando[]{
+	all e: Equipe, t: Time | #cercaQueEquipeEstaVerificando[e, t] > 0  
+	implies
+		e.situacao.t = Ocupada
+	else
+		e.situacao.t = Desocupada
+}
+
+
 
 fun cercaQueEquipeEstaVerificando[e: Equipe, t: Time]: lone Cerca{
-	e.ocupando.t
+	e.verificando.t
 }
 
 
 pred show[]{}
-run show for 15 but exactly 2 Cerca, 5 Casa
+run show for 3 but 30 Cerca
