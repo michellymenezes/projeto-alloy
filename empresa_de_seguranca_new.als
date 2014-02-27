@@ -66,22 +66,45 @@ pred cadaCercaExclusivaPraUmaCasa[c: Cerca, k1: Casa, k2: Casa]{
 	k1 != k2 => (c in k1.servicos => c !in k2.servicos)
 }
 
+pred cadaRondaExclusivaPraUmaCasa[r: Ronda, k1: Casa, k2: Casa]{
+	k1 != k2 => (r in k1.servicos => r !in k2.servicos)
+}
+
 pred cadaCasaPossuiUmaCerca[c1: Cerca, c2: Cerca, k: Casa]{
 	c1 != c2 => (c1 in k.servicos => c2 !in k.servicos)
 }
 
+pred cadaCasaPossuiUmaRonda[r1: Ronda, r2: Ronda, k: Casa]{
+	r1 != r2 => (r1 in k.servicos => r2 !in k.servicos)
+}
+
+pred cadaCameraExclusivaPraUmaCasa[c: Camera, k1: Casa, k2: Casa]{
+	k1 != k2 => (c in k1.servicos => c !in k2.servicos)
+}
+
+pred cadaCasaPossuiUmaCamera[c1: Camera, c2: Camera, k: Casa]{
+	c1 != c2 => (c1 in k.servicos => c2 !in k.servicos)
+}
+
+
 abstract sig Servico{}
-sig Cerca extends Servico{}
+sig Cerca extends Servico {}
 one sig Camera, Ronda extends Servico{}
 
 fact {
+
 	// unica cerca por casa 
 	all c: Cerca | some k: Casa | c in k.servicos
 	all c: Cerca, k1: Casa, k2: Casa | cadaCercaExclusivaPraUmaCasa[c, k1, k2]
 	all c1: Cerca, c2: Cerca, k: Casa | cadaCasaPossuiUmaCerca[c1, c2, k]
-	all r: Ronda | some k: Casa | r in k.servicos implies (some q: Cerca | q in k.servicos)
-	all c: Camera | some k: Casa | c in k.servicos implies (some q: Cerca | q in k.servicos)
-//	all c: Camera | some k: Casa | c in k.servicos
+	all r1: Ronda, r2: Ronda, k: Casa |cadaCasaPossuiUmaRonda[r1, r2, k]
+	all r: Ronda, k1: Casa, k2: Casa | cadaRondaExclusivaPraUmaCasa[r, k1, k2]
+	all c1: Camera, c2: Camera, k: Casa |cadaCasaPossuiUmaCamera[c1, c2, k]
+	all c: Camera, k1: Casa, k2: Casa | cadaCameraExclusivaPraUmaCasa[c, k1, k2]
+
+//	all r: Ronda | some k: Casa | r in k.servicos implies (some q: Cerca | q in k.servicos)
+	//all c: Camera | some k: Casa | c in k.servicos implies (some q: Cerca | q in k.servicos)
+
 }
 
 pred show[]{}
