@@ -95,6 +95,8 @@ fact {
 
 	// unica cerca por casa 
 	all c: Cerca | some k: Casa | c in k.servicos
+	all c: Camera | some k: Casa | c in k.servicos
+	all r: Ronda | some k: Casa | r in k.servicos
 	all c: Cerca, k1: Casa, k2: Casa | cadaCercaExclusivaPraUmaCasa[c, k1, k2]
 	all c1: Cerca, c2: Cerca, k: Casa | cadaCasaPossuiUmaCerca[c1, c2, k]
 	all r1: Ronda, r2: Ronda, k: Casa |cadaCasaPossuiUmaRonda[r1, r2, k]
