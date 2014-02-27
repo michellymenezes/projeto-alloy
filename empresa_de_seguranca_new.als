@@ -1,7 +1,12 @@
 module empresaDeSeguranca
 
-//open util/ordering[Time]
-//sig Time{}
+
+open util/ordering[Time]
+
+// ASSINATURAS
+sig Time{}
+
+
 
 sig sistema{
 	bairros: set bairro
@@ -11,9 +16,28 @@ sig bairro{
 	casas: set Casa
 }
 
+sig Casa{
+	servicos: set Servico
+}
 sig autoBranco extends bairro{}
 
 sig centro extends bairro{}
+
+abstract sig Servico{}
+sig Cerca extends Servico{
+ocupada : Equipe lone -> Time
+}
+one sig Camera, Ronda extends Servico{}
+
+abstract sig StatusDaEquipe{}
+one sig Ocupada, Desocupada extends StatusDaEquipe{}
+
+sig Equipe {
+	situacao: StatusDaEquipe -> Time,
+    ocupando: Cerca lone -> Time
+}
+
+
 
 // ..:: FATO SISTEMA ::..
 
@@ -37,9 +61,7 @@ fact sobreBairro {
 	bairro = autoBranco + centro
 }
 
-sig Casa{
-	servicos: set Servico
-}
+
 
 // ..:: FATO CASA ::..
 
@@ -53,6 +75,27 @@ fact sobreCasa{
 
 	// uma casa não está em dois bairros
 	all b1: bairro, b2: bairro, c: Casa | casaEmBairro[b1, b2, c]
+}
+
+
+// FATOS DO SISTEMA
+
+fact {
+
+	// unica cerca por casa 
+	all c: Cerca | some k: Casa | c in k.servicos
+	all c: Camera | some k: Casa | c in k.servicos
+	all r: Ronda | some k: Casa | r in k.servicos
+	all c: Cerca, k1: Casa, k2: Casa | cadaCercaExclusivaPraUmaCasa[c, k1, k2]
+	all c1: Cerca, c2: Cerca, k: Casa | cadaCasaPossuiUmaCerca[c1, c2, k]
+	all r1: Ronda, r2: Ronda, k: Casa |cadaCasaPossuiUmaRonda[r1, r2, k]
+	all r: Ronda, k1: Casa, k2: Casa | cadaRondaExclusivaPraUmaCasa[r, k1, k2]
+	all c1: Camera, c2: Camera, k: Casa |cadaCasaPossuiUmaCamera[c1, c2, k]
+	all c: Camera, k1: Casa, k2: Casa | cadaCameraExclusivaPraUmaCasa[c, k1, k2]
+
+//	all r: Ronda | some k: Casa | r in k.servicos implies (some q: Cerca | q in k.servicos)
+	//all c: Camera | some k: Casa | c in k.servicos implies (some q: Cerca | q in k.servicos)
+
 }
 
 // ..:: PREDICADOS ::..
@@ -87,27 +130,6 @@ pred cadaCasaPossuiUmaCamera[c1: Camera, c2: Camera, k: Casa]{
 }
 
 
-abstract sig Servico{}
-sig Cerca extends Servico {}
-one sig Camera, Ronda extends Servico{}
-
-fact {
-
-	// unica cerca por casa 
-	all c: Cerca | some k: Casa | c in k.servicos
-	all c: Camera | some k: Casa | c in k.servicos
-	all r: Ronda | some k: Casa | r in k.servicos
-	all c: Cerca, k1: Casa, k2: Casa | cadaCercaExclusivaPraUmaCasa[c, k1, k2]
-	all c1: Cerca, c2: Cerca, k: Casa | cadaCasaPossuiUmaCerca[c1, c2, k]
-	all r1: Ronda, r2: Ronda, k: Casa |cadaCasaPossuiUmaRonda[r1, r2, k]
-	all r: Ronda, k1: Casa, k2: Casa | cadaRondaExclusivaPraUmaCasa[r, k1, k2]
-	all c1: Camera, c2: Camera, k: Casa |cadaCasaPossuiUmaCamera[c1, c2, k]
-	all c: Camera, k1: Casa, k2: Casa | cadaCameraExclusivaPraUmaCasa[c, k1, k2]
-
-//	all r: Ronda | some k: Casa | r in k.servicos implies (some q: Cerca | q in k.servicos)
-	//all c: Camera | some k: Casa | c in k.servicos implies (some q: Cerca | q in k.servicos)
-
-}
 
 pred show[]{}
 run show for 15// but 30 Cerca, 5 Casa
