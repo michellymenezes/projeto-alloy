@@ -90,6 +90,7 @@ fact {
 	all r: Ronda | some k: Casa | r in k.servicos
 	all c: Cerca, k1: Casa, k2: Casa | cadaCercaExclusivaPraUmaCasa[c, k1, k2]
 	all c1: Cerca, c2: Cerca, k: Casa | cadaCasaPossuiUmaCerca[c1, c2, k]
+    all c1: Cerca, c2: Cerca, e: Equipe, t: Time | cadaCercaDisparaUmaEquipe[c1, c2, e, t]
     all e1: Equipe, e2: Equipe, k: Cerca, t: Time | cadaEquipeVerificaUmaCerca[e1, e2, k, t]
 	all r1: Ronda, k: Casa |  some c2: Cerca | soTemRondaSeTiverCerca[r1, c2, k]
 	//all r1: Ronda, r2: Ronda, k: Casa | cadaCasaPossuiUmaRonda[r1, r2, k]
@@ -117,6 +118,10 @@ pred cadaRondaExclusivaPraUmaCasa[r: Ronda, k1: Casa, k2: Casa]{
 
 pred cadaCasaPossuiUmaCerca[c1: Cerca, c2: Cerca, k: Casa]{
 	c1 != c2 => (c1 in k.servicos => c2 !in k.servicos)
+}
+
+pred cadaCercaDisparaUmaEquipe[c1: Cerca, c2: Cerca, e: Equipe, t: Time]{
+	 c1 != c2 => ( e in c1.disparando.t => e !in c1.disparando.t )
 }
 
 pred cadaEquipeVerificaUmaCerca[e1: Equipe, e2: Equipe, k: Cerca, t: Time]{
@@ -152,4 +157,4 @@ fun cercaQueEquipeEstaVerificando[e: Equipe, t: Time]: lone Cerca{
 
 
 pred show[]{}
-run show for 3 but 30 Cerca, 2 Casa
+run show for 5 but 30 Cerca, 5 Casa
