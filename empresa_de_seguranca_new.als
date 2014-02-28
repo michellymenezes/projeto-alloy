@@ -172,6 +172,21 @@ fun cercaQueEquipeEstaVerificando[e: Equipe, t: Time]: lone Cerca{
 	e.verificando.t
 }
 
+// TESTES
+
+assert testes{
+	// só existem 2 bairros
+	all s: sistema | #s.bairros = 2
+	// há pelo menos uma casa em cada bairro
+	all b: bairro | #b.casas >= 1
+	// se há ronda em uma casa, também há cerca
+	all c: Casa, s: servicos, ce: Cerca, r: Ronda | r in c.s implies ce in c.s
+	// se há monitoramento em uma casa, também há cerca
+	all c: Casa, s: servicos, ce: Cerca, m: Monitoramento | m in c.s implies ce in c.s
+	// se não há cerca em uma casa, também não há ronda
+	all c: Casa, s: servicos, ce: Cerca, r: Ronda | ce not in c.s implies r not in c.s
+}
+
 
 pred show[]{}
 run show for 20 but exactly 5 Cerca
