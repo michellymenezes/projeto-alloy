@@ -89,6 +89,9 @@ fact sobreCasa{
 // FATOS DO SISTEMA
 
 fact {
+  all c: Cerca, t: Time , e: Equipe | e in c.disparando.t => e.situacao.t = Ocupada
+  all c: Cerca, t: Time,  e: Equipe | Disparada in c.situacao.t && e in c.disparando.t => e.situacao.t = Ocupada
+  all c: Cerca, t: Time ,  e: Equipe | EmSeguranca in c.situacao.t => e !in c.disparando.t 
    //some c: Cerca | all t:Time | Disparada in c.situacao.t 
 	// Todo momento deve ter pelo menos 2 funcionarios monitorando
    all t: Time, c: Cerca| some e: Equipe | Disparada in c.situacao.t  => e.situacao.t = Ocupada
@@ -102,7 +105,7 @@ all m: Monitoramento, t: Time | #m.funcionarios.t >=2
 	all r: Ronda | some k: Casa | r in k.servicos
 	all c: Cerca, k1: Casa, k2: Casa | cadaCercaExclusivaPraUmaCasa[c, k1, k2]
 	all c1: Cerca, c2: Cerca, k: Casa | cadaCasaPossuiUmaCerca[c1, c2, k]
-  //  all c1: Cerca, c2: Cerca, e: Equipe, t: Time | cadaCercaDisparaUmaEquipe[c1, c2, e, t]
+    all c1: Cerca, c2: Cerca, e: Equipe, t: Time | cadaCercaDisparaUmaEquipe[c1, c2, e, t]
    all e1: Equipe, e2: Equipe, k: Cerca, t: Time | cadaEquipeVerificaUmaCerca[e1, e2, k, t]
 	all r1: Ronda, k: Casa |  some c2: Cerca | soTemRondaSeTiverCerca[r1, c2, k]
 	all m1: Monitoramento, k: Casa |  some c2: Cerca | soTemMonitoramentoSeTiverCerca[m1, c2, k]
@@ -131,11 +134,11 @@ pred cadaCasaPossuiUmaCerca[c1: Cerca, c2: Cerca, k: Casa]{
 }
 
 pred cadaCercaDisparaUmaEquipe[c1: Cerca, c2: Cerca, e: Equipe, t: Time]{
-	 c1 != c2 => ( e in c1.disparando.t => e !in c1.disparando.t )
+	 c1 != c2 => ( e in c1.disparando.t => e !in c2.disparando.t )
 }
 
 pred cadaEquipeVerificaUmaCerca[e1: Equipe, e2: Equipe, k: Cerca, t: Time]{
-//	e1 != e2 => ( k in e1.verificando.t => k !in e1.verificando.t )
+	e1 != e2 => ( k in e1.verificando.t => k !in e2.verificando.t )
 }
 
 pred soTemRondaSeTiverCerca[r1: Ronda, c2: Cerca, k: Casa]{
@@ -157,7 +160,7 @@ pred cadaEquipeEstaVerificandoNoMaximoCerca[]{
 }
 
 pred equipeOcupadaQuandoVerificando[]{
-	all e: Equipe, t: Time | some  c: Cerca | e in c.disparando .t 
+	all e: Equipe, t: Time | some  c: Cerca | e in c.disparando.t 
 	implies
 		e.situacao.t = Ocupada
 	else
