@@ -89,14 +89,12 @@ fact sobreCasa{
 // FATOS DO SISTEMA
 
 fact {
-  all c: Cerca, t: Time , e: Equipe | e in c.disparando.t => e.situacao.t = Ocupada
-  all c: Cerca, t: Time,  e: Equipe | Disparada in c.situacao.t && e in c.disparando.t => e.situacao.t = Ocupada
-  all c: Cerca, t: Time ,  e: Equipe | EmSeguranca in c.situacao.t => e !in c.disparando.t 
-   //some c: Cerca | all t:Time | Disparada in c.situacao.t 
+ 
+  	equipeOcupadaQuandoVerificandoCerca
+	equipeNaoVerificaUmaCercaSegura
+   	
 	// Todo momento deve ter pelo menos 2 funcionarios monitorando
    all t: Time, c: Cerca| some e: Equipe | Disparada in c.situacao.t  => e.situacao.t = Ocupada
-//all c: Cerca, t: Time | some e: Equipe |  Disparada in c.situacao.t -> e.situacao.t = Ocupada 
-all m: Monitoramento, t: Time | #m.funcionarios.t >=2
 	all m: Monitoramento, t: Time, f: Funcionario | f in m.funcionarios.t => f not in m.funcionarios.(t.next)
 	all c: Cerca, t: Time | some c.situacao.t 
     #Equipe = 3
@@ -149,6 +147,18 @@ pred soTemMonitoramentoSeTiverCerca[m1: Monitoramento, c2: Cerca, k: Casa]{
 	m1 in k.servicos =>  c2 in k.servicos
 }
 
+// SE UMA EQUIPE ESTA EM UMA CERCA DEVE ESTAR OCUPADA
+pred equipeOcupadaQuandoVerificandoCerca[]{
+	all c: Cerca, t: Time , e: Equipe | e in c.disparando.t => e.situacao.t = Ocupada
+	all c: Cerca, t: Time,  e: Equipe | Disparada in c.situacao.t && e in c.disparando.t => e.situacao.t = Ocupada
+
+ }
+
+// UMA CERCA SEGURA NÃO DEVE TER EQUIPE NO LOCAL
+pred equipeNaoVerificaUmaCercaSegura[]{
+	all c: Cerca, t: Time, e: Equipe | EmSeguranca in c.situacao.t => e !in c.disparando.t 
+ }
+
 
 pred cadaCasaPossuiUmaRonda[r1: Ronda, r2: Ronda, k: Casa]{
 	r1 != r2 => (r1 in k.servicos => r2 !in k.servicos)
@@ -162,11 +172,18 @@ pred cadaEquipeEstaVerificandoNoMaximoCerca[]{
 pred equipeOcupadaQuandoVerificando[]{
 	all e: Equipe, t: Time | some  c: Cerca | e in c.disparando.t 
 	implies
-		e.situacao.t = Ocupada
+		situacaoDaEquipe[e,t] = Ocupada
 	else
-		e.situacao.t = Desocupada
+		situacaoDaEquipe[e,t]  = Desocupada
 }
 
+fun cercaQueEstaDisparando[c: Cerca, t: Time]: lone Equipe{
+	c.disparando.t 
+}
+
+fun situacaoDaEquipe[e: Equipe, t: Time]: one StatusDaEquipe{
+	e.situacao.t
+}
 
 fun cercaQueEquipeEstaVerificando[e: Equipe, t: Time]: lone Cerca{
 	e.verificando.t
