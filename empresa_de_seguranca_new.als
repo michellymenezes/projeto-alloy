@@ -31,7 +31,7 @@ disparando: Equipe lone -> Time
 one sig Ronda extends Servico{}
 
 one sig Monitoramento extends Servico{
-funcionarios: set Funcionario
+funcionarios: set Funcionario -> Time
 }
 
 abstract sig StatusDaEquipe{}
@@ -86,7 +86,8 @@ fact sobreCasa{
 // FATOS DO SISTEMA
 
 fact {
-	all m: Monitoramento | #m.funcionarios >=2
+	// Todo momento deve ter pelo menos 2 funcionarios monitorando
+	all m: Monitoramento, t: Time | #m.funcionarios.t >=2
 	#Equipe =3
 	// unica cerca por casa 
 	all c: Cerca | some k: Casa | c in k.servicos
@@ -96,6 +97,7 @@ fact {
     all c1: Cerca, c2: Cerca, e: Equipe, t: Time | cadaCercaDisparaUmaEquipe[c1, c2, e, t]
     all e1: Equipe, e2: Equipe, k: Cerca, t: Time | cadaEquipeVerificaUmaCerca[e1, e2, k, t]
 	all r1: Ronda, k: Casa |  some c2: Cerca | soTemRondaSeTiverCerca[r1, c2, k]
+	all m1: Monitoramento, k: Casa |  some c2: Cerca | soTemMonitoramentoSeTiverCerca[m1, c2, k]
 	//all r1: Ronda, r2: Ronda, k: Casa | cadaCasaPossuiUmaRonda[r1, r2, k]
 	//all r: Ronda, k1: Casa, k2: Casa | cadaRondaExclusivaPraUmaCasa[r, k1, k2]
 
@@ -134,6 +136,11 @@ pred cadaEquipeVerificaUmaCerca[e1: Equipe, e2: Equipe, k: Cerca, t: Time]{
 pred soTemRondaSeTiverCerca[r1: Ronda, c2: Cerca, k: Casa]{
 	r1 in k.servicos =>  c2 in k.servicos
 }
+
+pred soTemMonitoramentoSeTiverCerca[m1: Monitoramento, c2: Cerca, k: Casa]{
+	m1 in k.servicos =>  c2 in k.servicos
+}
+
 
 pred cadaCasaPossuiUmaRonda[r1: Ronda, r2: Ronda, k: Casa]{
 	r1 != r2 => (r1 in k.servicos => r2 !in k.servicos)
