@@ -15,6 +15,7 @@ sig sistema{
 sig bairro{
 	casas: set Casa
 }
+sig Funcionario {}
 
 sig Casa{
 	servicos: set Servico
@@ -29,7 +30,9 @@ disparando: Equipe lone -> Time
 }
 one sig Ronda extends Servico{}
 
-one sig Monitoramento extends Servico{}
+one sig Monitoramento extends Servico{
+funcionarios: set Funcionario
+}
 
 abstract sig StatusDaEquipe{}
 one sig Ocupada, Desocupada extends StatusDaEquipe{}
@@ -83,7 +86,7 @@ fact sobreCasa{
 // FATOS DO SISTEMA
 
 fact {
-
+	all m: Monitoramento | #m.funcionarios >=2
 	#Equipe =3
 	// unica cerca por casa 
 	all c: Cerca | some k: Casa | c in k.servicos
@@ -157,4 +160,4 @@ fun cercaQueEquipeEstaVerificando[e: Equipe, t: Time]: lone Cerca{
 
 
 pred show[]{}
-run show for 5 but 30 Cerca, 5 Casa
+run show for 3 but 30 Cerca, 5 Casa
